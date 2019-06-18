@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const propTypes = {
   /** CSS class of the container  */
   className: PropTypes.string,
-  /** Children content of the Tabs container.  */
+  /** Children content of the Tabs container (minimum 2 children).  */
   children: PropTypes.node.isRequired,
 };
 
