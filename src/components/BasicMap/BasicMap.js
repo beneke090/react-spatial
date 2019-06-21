@@ -266,6 +266,7 @@ class BasicMap extends Component {
     const { className, tabIndex } = this.props;
     return (
       <div
+        id="map"
         className={className}
         ref={this.node}
         role="menu"

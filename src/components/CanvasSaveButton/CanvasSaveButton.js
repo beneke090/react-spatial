@@ -138,16 +138,14 @@ class CanvasSaveButton extends PureComponent {
       const dpi = extraData && extraData.dpi ? extraData.dpi : 96;
       const scaleFactor = dpi / 96;
 
-      map.once('precompose', evt => {
-        const { canvas } = evt.context;
+      map.once('precompose', () => {
+        const canvas = window.mbMap.getCanvas();
         canvas.width = Math.ceil(canvas.width * scaleFactor);
         canvas.height = Math.ceil(canvas.height * scaleFactor);
-        const ctx = canvas.getContext('2d');
-        ctx.scale(scaleFactor, scaleFactor);
       });
 
-      map.once('postcompose', evt => {
-        const { canvas } = evt.context;
+      map.once('postcompose', () => {
+        const canvas = window.mbMap.getCanvas();
 
         let clip = {
           x: 0,
@@ -276,7 +274,7 @@ class CanvasSaveButton extends PureComponent {
         }
 
         // Re-render in order to revert to initial dpi
-        map.renderSync();
+        // map.renderSync();
       });
       map.renderSync();
     });
