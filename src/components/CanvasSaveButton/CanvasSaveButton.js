@@ -140,56 +140,21 @@ class CanvasSaveButton extends PureComponent {
 
       map.once('precompose', () => {
         const canvas = window.mbMap.getCanvas();
-        canvas.width = Math.ceil(canvas.width * scaleFactor);
+        /* canvas.width = Math.ceil(canvas.width * scaleFactor);
         canvas.height = Math.ceil(canvas.height * scaleFactor);
+        canvas.style.width = Math.ceil(canvas.width);
+        canvas.style.height = Math.ceil(canvas.height); */
       });
 
       map.once('postcompose', () => {
         const canvas = window.mbMap.getCanvas();
 
-        let clip = {
+        const clip = {
           x: 0,
           y: 0,
           w: canvas.width,
           h: canvas.height,
         };
-
-        let firstCoordinate;
-        let oppositeCoordinate;
-
-        if (extent) {
-          firstCoordinate = getTopLeft(extent);
-          oppositeCoordinate = getBottomRight(extent);
-        } else if (coordinates) {
-          // In case of coordinates coming from DragBox interaction:
-          //   firstCoordinate is the first coordinate drawn by the user.
-          //   oppositeCoordinate is the coordinate of the point dragged by the user.
-          [firstCoordinate, , oppositeCoordinate] = coordinates;
-        }
-
-        if (firstCoordinate && oppositeCoordinate) {
-          const firstPixel = map.getPixelFromCoordinate(firstCoordinate);
-          const oppositePixel = map.getPixelFromCoordinate(oppositeCoordinate);
-          const pixelTopLeft = [
-            firstPixel[0] <= oppositePixel[0]
-              ? firstPixel[0]
-              : oppositePixel[0],
-            firstPixel[1] <= oppositePixel[1]
-              ? firstPixel[1]
-              : oppositePixel[1],
-          ];
-          const pixelBottomRight = [
-            firstPixel[0] > oppositePixel[0] ? firstPixel[0] : oppositePixel[0],
-            firstPixel[1] > oppositePixel[1] ? firstPixel[1] : oppositePixel[1],
-          ];
-
-          clip = {
-            x: pixelTopLeft[0] * scaleFactor,
-            y: pixelTopLeft[1] * scaleFactor,
-            w: (pixelBottomRight[0] - pixelTopLeft[0]) * scaleFactor,
-            h: (pixelBottomRight[1] - pixelTopLeft[1]) * scaleFactor,
-          };
-        }
 
         const destCanvas = document.createElement('canvas');
         destCanvas.width = clip.w;
@@ -210,72 +175,9 @@ class CanvasSaveButton extends PureComponent {
           clip.w,
           clip.h,
         );
-
-        const padding = 5;
-
-        // Copyright
-        if (extraData && extraData.copyright && extraData.copyright.text) {
-          const text =
-            typeof extraData.copyright.text === 'function'
-              ? extraData.copyright.text()
-              : extraData.copyright.text;
-
-          destContext.font = extraData.copyright.font || '12px Arial';
-          destContext.fillStyle = extraData.copyright.fillStyle || 'black';
-          destContext.fillText(text, padding, clip.h - padding);
-        }
-
-        // North arrow
-        if (extraData && extraData.northArrow) {
-          const img = new Image();
-          if (extraData.northArrow.src) {
-            img.src = extraData.northArrow.src;
-          } else {
-            img.src = extraData.northArrow.circled
-              ? NorthArrowCircle
-              : NorthArrowSimple;
-          }
-
-          img.onload = () => {
-            destContext.save();
-
-            const arrowWidth = extraData.northArrow.width || 80;
-            const arrowHeight = extraData.northArrow.height || 80;
-            const arrowSize = Math.max(arrowWidth, arrowHeight);
-
-            destContext.translate(
-              clip.w - 2 * padding - arrowSize / 2,
-              clip.h - 2 * padding - arrowSize / 2,
-            );
-
-            if (extraData.northArrow.rotation) {
-              const rotation =
-                typeof extraData.northArrow.rotation === 'function'
-                  ? extraData.northArrow.rotation()
-                  : extraData.northArrow.rotation;
-
-              destContext.rotate(rotation * (Math.PI / 180));
-            }
-
-            destContext.drawImage(
-              img,
-              -arrowWidth / 2,
-              -arrowHeight / 2,
-              arrowWidth,
-              arrowHeight,
-            );
-
-            destContext.restore();
-
-            resolve(destCanvas);
-          };
-        } else {
-          resolve(destCanvas);
-        }
-
-        // Re-render in order to revert to initial dpi
-        // map.renderSync();
+        resolve(destCanvas);
       });
+      window.mbMap._render();
       map.renderSync();
     });
   }
