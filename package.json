@@ -57,7 +57,7 @@
     "stylelint-scss": "^3.4.0",
     "url-loader": "^2.0.0",
     "vinyl-fs": "^3.0.3",
-    "webpack": "^4.39.1"
+    "webpack": "^4.39.2"
   },
   "peerDependency": {
     "ol": "^5.3.3",
