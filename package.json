@@ -34,7 +34,7 @@
     "jest-environment-jsdom-fourteen": "^0.1.0",
     "jest-serializer-html": "^7.0.0",
     "jest-svg-transformer": "^1.0.0",
-    "jsts": "^2.0.3",
+    "jsts": "^2.0.8",
     "lint-staged": "^9.2.0",
     "node-sass": "^4.11.0",
     "ol": "^6.0.0-beta.11",
